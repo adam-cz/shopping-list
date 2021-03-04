@@ -2,25 +2,29 @@ import { useState } from "react";
 
 function App() {
   const [input, setInput] = useState("");
-  const [todos, setTodos] = useState([]);
+  const [items, setItems] = useState([]);
 
   const onChange = (event) => {
     setInput(event.target.value);
   };
-  //test
-  const todoModel = {
-    productName: "",
-    inCart: false,
-    icon: "",
-  };
 
-  const addTodo = () => {
-    setTodos([...todos, input]);
+  /*
+  const itemModel = {
+    productName: "",
+    inCart: false
+  };
+  */
+
+  const addItem = () => {
+    setItems([...items, {
+      productName: input, 
+      inCart: false
+    }]);
     setInput("");
   };
 
-  const deleteTodo = (index) => {
-    setTodos(todos.filter((value, pos) => pos !== index));
+  const deleteItem = (index) => {
+    setItems(items.filter((value, pos) => pos !== index));
   };
 
   return (
@@ -28,14 +32,14 @@ function App() {
       <h1>Nákupní seznam</h1>
       <div className="input">
         <input type="text" onChange={onChange} value={input} />
-        <button onClick={addTodo}>Přidat</button>
+        <button onClick={addItem}>Přidat</button>
       </div>
       <ul>
-        {todos.map((todo, index) => (
+        {items.map((item, index) => (
           <li key={index}>
-            {todo}
-            <button onClick={() => deleteTodo(index)}>X</button>
-            <button>Hotovo</button>
+            {item.productName}
+            <button onClick={() => deleteItem(index)}>X</button>
+            <button>Koupeno</button>
           </li>
         ))}
       </ul>
