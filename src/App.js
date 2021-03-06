@@ -1,48 +1,58 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Form from "./components/Form";
+import ItemList from "./components/ItemList";
 
 function App() {
   const [input, setInput] = useState("");
   const [items, setItems] = useState([]);
+  const [filter, setFilter] = useState("all");
+  const [filteredItems, setFilteredItems] = useState([]);
 
-  const onChange = (event) => {
-    setInput(event.target.value);
-  };
+  //Get items from localStorge
+  useEffect(() => {
+    if (localStorage.getItem("items"))
+      setItems(JSON.parse(localStorage.getItem("items")));
+  }, []);
 
-  /*
-  const itemModel = {
-    productName: "",
-    inCart: false
-  };
-  */
+  //Save items to localStorage
+  useEffect(() => {
+    localStorage.clear();
+    localStorage.setItem("items", JSON.stringify(items));
+  }, [items]);
 
-  const addItem = () => {
-    setItems([...items, {
-      productName: input, 
-      inCart: false
-    }]);
-    setInput("");
-  };
-
-  const deleteItem = (index) => {
-    setItems(items.filter((value, pos) => pos !== index));
-  };
+  //filtering items
+  useEffect(() => {
+    switch (filter) {
+      case "done":
+        setFilteredItems(items.filter((item) => item.inCart === true));
+        break;
+      case "todo":
+        setFilteredItems(items.filter((item) => item.inCart === false));
+        break;
+      default:
+        setFilteredItems(items);
+        break;
+    }
+    console.log(filteredItems);
+  }, [filter, items]);
 
   return (
-    <div className="list">
-      <h1>Nákupní seznam</h1>
-      <div className="input">
-        <input type="text" onChange={onChange} value={input} />
-        <button onClick={addItem}>Přidat</button>
-      </div>
-      <ul>
-        {items.map((item, index) => (
-          <li key={index}>
-            {item.productName}
-            <button onClick={() => deleteItem(index)}>X</button>
-            <button>Koupeno</button>
-          </li>
-        ))}
-      </ul>
+    <div className="app-container">
+      <header>
+        <h1>Nákupní seznam</h1>
+      </header>
+      <Form
+        input={input}
+        setInput={setInput}
+        items={items}
+        setItems={setItems}
+        setFilter={setFilter}
+      />
+      <ItemList
+        items={items}
+        setItems={setItems}
+        filteredItems={filteredItems}
+      />
     </div>
   );
 }
